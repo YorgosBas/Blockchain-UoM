@@ -14,7 +14,8 @@ class App extends Component {
       Computer: []
     },
     bidAmount: '',
-    contractBalance: ''
+    contractBalance: '',
+    newOwner: ''
   };
 
   async componentDidMount() {
@@ -100,6 +101,68 @@ class App extends Component {
     }
   };
 
+  amIWinner = async () => {
+    this.setState({ message: 'Checking if you are a winner...' });
+
+    try {
+        const wins = await lottery.methods.checkMyWins().call({
+            from: this.state.currentAccount
+        });
+
+        if (wins.length === 0) {
+            this.setState({ message: 'You did not win anything.' });
+        } else {
+            this.setState({ message: `You won: ${wins}` });
+        }
+    } catch (error) {
+        this.setState({ message: 'Error: ' + error.message });
+    }
+  };
+
+  withdraw = async () => {
+    this.setState({ message: 'Withdrawing funds...' });
+  
+    try {
+      await lottery.methods.withdraw().send({ from: this.state.currentAccount });
+      this.setState({ message: 'Funds withdrawn successfully.' });
+    } catch (error) {
+      this.setState({ message: 'Withdraw failed: ' + error.message });
+    }
+  };
+
+  startNewLottery = async () => {
+    this.setState({ message: 'Starting new lottery cycle...' });
+
+    try {
+        await lottery.methods.startNewLottery().send({ from: this.state.currentAccount });
+        this.setState({ message: 'New lottery cycle started.' });
+    } catch (error) {
+        this.setState({ message: 'Failed to start new lottery cycle: ' + error.message });
+    }
+  };
+
+  transferOwnership = async () => {
+    this.setState({ message: 'Transferring ownership...' });
+
+    try {
+        await lottery.methods.transferOwnership(this.state.newOwner).send({ from: this.state.currentAccount });
+        this.setState({ message: 'Ownership transferred.' });
+    } catch (error) {
+        this.setState({ message: 'Ownership transfer failed: ' + error.message });
+    }
+  };
+
+  destroyContract = async () => {
+    this.setState({ message: 'Destroying contract...' });
+
+    try {
+        await lottery.methods.destroyContract().send({ from: this.state.currentAccount });
+        this.setState({ message: 'Contract destroyed.' });
+    } catch (error) {
+        this.setState({ message: 'Failed to destroy contract: ' + error.message });
+    }
+  };
+
   render() {
     return (
       <div className="text-center">
@@ -122,10 +185,11 @@ class App extends Component {
           ))}
         </div>
         <div className="mt-4">
-          <button className="btn btn-warning mx-2" onClick={this.pickWinners}>Declare Winner</button>
-          <button className="btn btn-secondary mx-2" onClick={this.reveal}>Reveal</button>
+          <button className="btn btn-warning mx-2" onClick={this.pickWinners} disabled={this.state.currentAccount === this.state.manager} > Declare Winner</button>
           <button className="btn btn-info mx-2" onClick={this.amIWinner}>Am I Winner</button>
-          <button className="btn btn-success mx-2" onClick={this.withdraw}>Withdraw</button>
+          <button className="btn btn-success mx-2" onClick={this.withdraw} disabled={this.state.currentAccount === this.state.manager} > Withdraw</button>
+          <button className="btn btn-secondary mx-2" onClick={this.startNewLottery} disabled={this.state.currentAccount === this.state.manager}>Start New Lottery</button>
+          <button className="btn btn-danger mx-2" onClick={this.destroyContract} disabled={this.state.currentAccount === this.state.manager}>Destroy Contract</button>
         </div>
         <div className="mt-4">
           <p>Current Account: {this.state.currentAccount}</p>
@@ -134,6 +198,10 @@ class App extends Component {
         </div>
         <div className="mt-4">
           <h5>{this.state.message}</h5>
+        </div>
+        <div>
+          <input type="text" value={this.state.newOwner} onChange={event => this.setState({ newOwner: event.target.value })} placeholder="New Owner Address" />
+          <button className="btn btn-secondary mx-2" onClick={this.transferOwnership} disabled={this.state.currentAccount !== this.state.manager}>Transfer Ownership</button>
         </div>
       </div>
     );

@@ -1,5 +1,5 @@
 import web3 from './web3';
-const address = '0xd4AAa8351B9A56B2859c6012dE069fE820847D16';
+const address = '0x1c7C41ac7E25cD4cD7Cad4b10a8d09ed1D6A16Ca';
 const abi = [
 	{
 		"inputs": [],
@@ -82,6 +82,26 @@ const abi = [
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "checkMyWins",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "destroyContract",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "string",
@@ -135,6 +155,33 @@ const abi = [
 	{
 		"inputs": [],
 		"name": "pickWinners",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "startNewLottery",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
